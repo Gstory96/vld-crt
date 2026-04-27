@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Certificate validation – Learnmarine</title>
+  <meta name="description" content="Verify the authenticity of Learnmarine certificates online.">
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 15px;
+      color: #333;
+      min-height: 100vh;
+      background-color: #eef1f4;
+    }
+    a { color: #1a6faf; text-decoration: none; }
+    a:hover { color: #104f7e; text-decoration: underline; }
+    img { max-width: 100%; }
+
+    /* ── Hexagon background ── */
+    .hexa-bg::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='174'%3E%3Cpolygon points='100,4 192,52 192,148 100,196 8,148 8,52' fill='none' stroke='%23b0cfe8' stroke-width='1.5' opacity='0.5'/%3E%3C/svg%3E");
+      background-size: 155px 135px;
+    }
+
+    /* ── Container ── */
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .container-fluid {
+      width: 100%;
+      padding: 0 28px;
+    }
+
+    /* ── Grid helpers ── */
+    .row { display: flex; flex-wrap: wrap; margin: 0 -12px; }
+    .col { flex: 1; padding: 0 12px; }
+    .col-half { flex: 0 0 50%; max-width: 50%; padding: 0 12px; }
+    .col-full { flex: 0 0 100%; max-width: 100%; padding: 0 12px; }
+    .col-offset { margin-left: 9.09%; flex: 0 0 81.82%; max-width: 81.82%; padding: 0 12px; }
+
+    /* ── HEADER ── */
+    .header {
+      position: relative;
+      z-index: 100;
+      background: #fff;
+      border-bottom: 1px solid #dde5ed;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .header .container-fluid {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 58px;
+    }
+    .logo-flex {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      text-decoration: none !important;
+    }
+    .logo-icon-wrap {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1564a8 0%, #3eb8e0 100%);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .logo-wordmark { font-size: 1.1rem; font-weight: 400; color: #2a2a2a; }
+    .menu-block { display: flex; align-items: center; }
+    .menu-block ul { list-style: none; display: flex; gap: 36px; }
+    .menu-block ul li a { font-size: .95rem; color: #444; text-decoration: none; }
+    .menu-block ul li a:hover { color: #1a6faf; }
+    .profile_link { display: flex; align-items: center; gap: 14px; }
+    .profile_link a { font-size: .95rem; color: #444; text-decoration: none; }
+    .profile_link a:hover { color: #1a6faf; }
+    .lang-select {
+      border: 1px solid #bbb; border-radius: 4px;
+      font-size: .88rem; padding: 4px 8px;
+      color: #444; cursor: pointer; background: #fff; outline: none;
+    }
+    .mobile-menu {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 4px;
+    }
+    .mobile-menu span {
+      display: block; width: 24px; height: 2px;
+      background: #444; border-radius: 2px;
+    }
+    #mobileNav { display: none; background: #fff; border-top: 1px solid #eee; padding: 12px 20px; }
+    #mobileNav a { display: block; padding: 8px 0; color: #444; text-decoration: none; font-size: .95rem; }
+    #mobileNav a:hover { color: #1a6faf; }
+    #mobileNav hr { margin: 8px 0; border: none; border-top: 1px solid #eee; }
+
+    /* ── PAGE WRAPPER ── */
+    .page-wrapper {
+      position: relative; z-index: 1;
+      padding: 44px 16px 72px;
+    }
+    .contacts-sub-title {
+      text-align: center; font-size: 1.18rem; font-weight: 400;
+      color: #333; margin-bottom: 30px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: #fff; border-radius: 14px;
+      box-shadow: 0 2px 20px rgba(0,0,0,.09);
+      padding: 38px 40px 42px; border: none;
+    }
+    .card h4 { font-size: 1rem; font-weight: 700; color: #222; margin-bottom: 20px; }
+
+    /* ── FORM ── */
+    .form-control {
+      display: block; width: 100%;
+      padding: 10px 14px; font-size: .95rem;
+      border: 1.5px solid #aec8df; border-radius: 7px;
+      color: #333; background: #fff;
+      margin-bottom: 14px;
+      transition: border-color .15s, box-shadow .15s;
+      font-family: inherit;
+    }
+    .form-control:focus {
+      border-color: #1a6faf;
+      box-shadow: 0 0 0 3px rgba(26,111,175,.12);
+      outline: none;
+    }
+    .text-center { text-align: center; }
+    .mt-2 { margin-top: 8px; }
+    .mb-4 { margin-bottom: 24px; }
+    .button-sm {
+      background: #1a6faf; color: #fff;
+      border: none; border-radius: 7px;
+      padding: 10px 44px;
+      font-size: .84rem; font-weight: 700;
+      letter-spacing: 1.4px; text-transform: uppercase;
+      cursor: pointer; font-family: inherit;
+      transition: background .15s, transform .1s;
+    }
+    .button-sm:hover { background: #135590; transform: translateY(-1px); }
+    .button-sm:active { transform: translateY(0); }
+
+    /* ── RESULT ── */
+    .fixed-alert {
+      border-radius: 7px; padding: 11px 16px;
+      font-size: .95rem; margin-bottom: 16px;
+    }
+    .fixed-alert-success {
+      background: #e8f5e9; color: #2e7d32;
+      border: 1px solid #c8e6c9;
+    }
+    .fixed-alert-error {
+      background: #fdecea; color: #b71c1c;
+      border: 1px solid #ffcdd2;
+    }
+    .certificate-validation-result {
+      background: #f5f9fc; border-radius: 8px;
+      border: 1px solid #d0e6f5; padding: 16px 18px;
+    }
+    .certificate-validation-result p {
+      margin-bottom: 9px; font-size: .93rem;
+      line-height: 1.55; color: #333;
+    }
+    .certificate-validation-result p:last-child { margin-bottom: 0; }
+    .certificate-validation-result strong { color: #111; }
+
+    /* ── FOOTER ── */
+    .footer {
+      position: relative; z-index: 1;
+      background: #1e3a4a; color: #c8dce6;
+      padding: 50px 0 0;
+    }
+    .footer h3 { color: #fff; font-size: .97rem; font-weight: 700; margin-bottom: 16px; }
+    .footer a { color: #c8dce6; text-decoration: none; }
+    .footer a:hover { color: #fff; text-decoration: underline; }
+    .footer_columns { display: flex; gap: 0; align-items: flex-start; }
+    .footer_left   { flex: 0 0 38%; padding-right: 40px; }
+    .footer_center { flex: 0 0 24%; padding-right: 20px; }
+    .footer_right  { flex: 1; }
+    .footer_contacts p { font-size: .9rem; margin-bottom: 0; }
+    .footer_contacts strong a { color: #c8dce6; text-decoration: underline; }
+    .footer_contacts strong a:hover { color: #fff; }
+    .footer_social { margin-top: 22px; }
+    .fs_title { font-size: .97rem; font-weight: 700; color: #fff; margin-bottom: 14px; }
+    .footer_social nav { display: flex; gap: 14px; flex-wrap: wrap; }
+    .social-icon {
+      display: flex; align-items: center; justify-content: center;
+      width: 46px; height: 46px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.55);
+      color: #fff !important; text-decoration: none !important;
+      transition: border-color .15s, background .15s; flex-shrink: 0;
+    }
+    .social-icon:hover {
+      border-color: #fff; background: rgba(255,255,255,.12);
+      text-decoration: none !important;
+    }
+    .footer_menu ul { list-style: none; padding: 0; margin: 0; }
+    .footer_menu ul li { margin-bottom: 8px; }
+    .footer_menu ul li a { font-size: .9rem; color: #c8dce6; text-decoration: underline; }
+    .footer_menu ul li a:hover { color: #fff; }
+    .copyright {
+      margin-top: 36px; padding: 16px 0 18px;
+      border-top: 1px solid rgba(255,255,255,.12);
+      text-align: center; font-size: .85rem; color: #c8dce6;
+    }
+
+    /* ── MODALS ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.5); z-index: 1000;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+      background: #fff; border-radius: 14px;
+      padding: 32px 36px; width: 100%; max-width: 420px;
+      position: relative; box-shadow: 0 8px 40px rgba(0,0,0,.18);
+    }
+    .modal-close {
+      position: absolute; top: 14px; right: 18px;
+      font-size: 1.5rem; color: #999; cursor: pointer;
+      background: none; border: none; line-height: 1;
+    }
+    .modal-close:hover { color: #333; }
+    .block_title {
+      font-size: 1.2rem; font-weight: 700;
+      text-align: center; margin-bottom: 22px; color: #222;
+    }
+    .form-group { margin-bottom: 14px; }
+    .form-group .form-control { margin-bottom: 0; }
+    .form-text-gray { font-size: .84rem; color: #888; }
+    .text-right { text-align: right; }
+    .checkbox-row { display: flex; align-items: flex-start; gap: 8px; }
+    .checkbox-row input { margin-top: 3px; flex-shrink: 0; }
+    .checkbox-row label { font-size: .9rem; margin: 0; }
+    .modal-btn { width: 100%; margin-top: 8px; }
+
+    /* ── COOKIE BANNER ── */
+    #cookie-banner {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      z-index: 9999; background: #1c2d3e; color: #d0e0ea;
+      padding: 18px 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 20px; flex-wrap: wrap;
+      box-shadow: 0 -2px 16px rgba(0,0,0,.2);
+    }
+    #cookie-banner p { margin: 0; font-size: .88rem; flex: 1; min-width: 200px; }
+    #cookie-banner a { color: #6db0d0; }
+    .cookie-btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+    .cookie-btn {
+      border: none; border-radius: 6px; padding: 9px 20px;
+      font-size: .84rem; font-weight: 600; cursor: pointer;
+      font-family: inherit; transition: background .15s;
+    }
+    .cookie-btn-primary { background: #1a6faf; color: #fff; }
+    .cookie-btn-primary:hover { background: #135590; }
+    .cookie-btn-secondary { background: rgba(255,255,255,.12); color: #d0e0ea; }
+    .cookie-btn-secondary:hover { background: rgba(255,255,255,.22); }
+
+    /* ── PRELOADER ── */
+    #translate-preloader {
+      display: none; position: fixed; inset: 0; z-index: 9998;
+      background: rgba(255,255,255,.7);
+      align-items: center; justify-content: center;
+    }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 4px solid #ddd; border-top-color: #1a6faf;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 991px) {
+      .menu-block, .profile_link { display: none !important; }
+      .mobile-menu { display: flex; }
+      .header .container-fluid { padding: 0 16px; }
+    }
+    @media (max-width: 767px) {
+      .col-half { flex: 0 0 100%; max-width: 100%; }
+      .col-offset { margin-left: 0; flex: 0 0 100%; max-width: 100%; }
+      .card { padding: 24px 18px 28px; }
+      .page-wrapper { padding: 28px 12px 48px; }
+      .mb-4 { margin-bottom: 24px; }
+      /* Footer mobile */
+      .footer_columns { flex-direction: column; }
+      .footer_left, .footer_center, .footer_right {
+        flex: none; width: 100%; padding-right: 0; margin-bottom: 28px;
+      }
+      .social-icon { width: 54px; height: 54px; }
+      /* Cookie */
+      #cookie-banner { flex-direction: column; padding: 16px 20px; }
+      /* Modal */
+      .modal-box { padding: 24px 20px; margin: 0 16px; }
+    }
+  </style>
+</head>
+<body class="hexa-bg">
+
+<!-- Preloader -->
+<div id="translate-preloader">
+  <div class="spinner"></div>
+</div>
+
+<!-- ═══ HEADER ═══ -->
+<header class="header">
+  <div class="container-fluid">
+    <div class="logo">
+      <a href="https://learnmarine.com/" class="logo-flex">
+        <div class="logo-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/>
+            <circle cx="12" cy="12" r="2.5" fill="#fff"/>
+            <line x1="12" y1="3"    x2="12" y2="7.5"  stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+            <line x1="12" y1="16.5" x2="12" y2="21"   stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+            <line x1="3"  y1="12"   x2="7.5" y2="12"  stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+            <line x1="16.5" y1="12" x2="21"  y2="12"  stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="logo-wordmark">Learnmarine</span>
+      </a>
+    </div>
+
+    <nav class="menu-block">
+      <ul>
+        <li><a href="https://learnmarine.com/catalogue">Catalog</a></li>
+        <li><a href="https://learnmarine.com/blog">Blog</a></li>
+        <li><a href="https://learnmarine.com/contacts">Contacts</a></li>
+      </ul>
+    </nav>
+
+    <div class="profile_link">
+      <a href="#" onclick="openModal('loginModal');return false;">Login</a>
+      <a href="#" onclick="openModal('signupModal');return false;">Sign Up</a>
+      <select id="change_language" class="lang-select" title="Language">
+        <option value="en">EN</option>
+        <option value="uk">UA</option>
+        <option value="es">ES</option>
+      </select>
+    </div>
+
+    <div class="mobile-menu" id="mobileMenuToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <div id="mobileNav">
+    <a href="https://learnmarine.com/catalogue">Catalog</a>
+    <a href="https://learnmarine.com/blog">Blog</a>
+    <a href="https://learnmarine.com/contacts">Contacts</a>
+    <hr>
+    <a href="#" onclick="openModal('loginModal');return false;" style="color:#1a6faf;">Login</a>
+    <a href="#" onclick="openModal('signupModal');return false;" style="color:#1a6faf;">Sign Up</a>
+  </div>
+</header>
+
+<!-- ═══ MAIN ═══ -->
+<div class="page-wrapper">
+  <section class="container">
+    <div class="contacts-sub-title">Certificate validity check</div>
+    <div class="row">
+      <div class="col-offset">
+        <div class="card">
+          <div class="row">
+
+            <!-- Left: form -->
+            <div class="col-half mb-4">
+              <h4>Query input</h4>
+              <form id="certificate-validation-form" action="https://learnmarine.com/validate" method="post">
+                <input type="text"
+                  id="certificatevalidationform-name"
+                  class="form-control"
+                  name="CertificateValidationForm[name]"
+                  value="Kameniuka"
+                  placeholder="Surname"
+                  required>
+                <input type="text"
+                  id="certificatevalidationform-number"
+                  class="form-control"
+                  name="CertificateValidationForm[number]"
+                  value="26042016"
+                  placeholder="Certificate number"
+                  required>
+                <div class="text-center mt-2">
+                  <button type="submit" class="button-sm">Check</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Right: result -->
+            <div class="col-half">
+              <h4>Search result</h4>
+              <p class="fixed-alert fixed-alert-success">Certificate is valid!</p>
+              <div class="certificate-validation-result">
+                <p>Certificate <strong>26042016</strong> was issued to <strong>Ivan Kameniuka</strong></p>
+                <p>Course name: <strong>Dangerous Goods (HAZMAT)</strong></p>
+                <p>Test score: <strong>88%</strong></p>
+                <p>Issue date: <strong>Apr 20, 2026</strong></p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer_columns">
+
+      <div class="footer_left">
+        <h3>Contacts</h3>
+        <div class="footer_contacts">
+          <p>E-mail: <strong><a href="mailto:info@learnmarine.com">info@learnmarine.com</a></strong></p>
+        </div>
+        <div class="footer_social">
+          <div class="fs_title">Follow us on Social Media</div>
+          <nav>
+            <a href="https://www.linkedin.com/company/learnmarine/" target="_blank" rel="noopener" class="social-icon" aria-label="LinkedIn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S.02 4.88.02 3.5 1.13 1 2.5 1s2.48 1.12 2.48 2.5zM.3 8.5h4.4V24H.3V8.5zM8.5 8.5h4.2v2.13h.06c.59-1.12 2.03-2.3 4.17-2.3C21.3 8.33 22 11.2 22 14.8V24h-4.4v-8.33c0-1.99-.04-4.55-2.77-4.55-2.77 0-3.2 2.16-3.2 4.4V24H8.5V8.5z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/learnmarine" target="_blank" rel="noopener" class="social-icon" aria-label="Instagram">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="white" stroke="none"/></svg>
+            </a>
+            <a href="https://www.facebook.com/learnmarinecom" target="_blank" rel="noopener" class="social-icon" aria-label="Facebook">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            </a>
+            <a href="https://www.youtube.com/channel/UC0y1UErKxFLwVmdAeHKgkew" target="_blank" rel="noopener" class="social-icon" aria-label="YouTube">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29.94 29.94 0 0 0 1 12a29.94 29.94 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29.94 29.94 0 0 0 23 12a29.94 29.94 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#1e3a4a"/></svg>
+            </a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="footer_center">
+        <h3>Policies</h3>
+        <nav class="footer_menu">
+          <ul>
+            <li><a href="https://learnmarine.com/terms">Terms &amp; Conditions</a></li>
+            <li><a href="https://learnmarine.com/privacy_policy">Privacy</a></li>
+            <li><a href="https://learnmarine.com/terms">User Policy</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="footer_right">
+        <h3>For any queries please use provided feedback form</h3>
+      </div>
+
+    </div>
+    <div class="copyright">© 2017-2026 © Learnmarine all rights reserved</div>
+  </div>
+</footer>
+
+<!-- ═══ MODAL: Login ═══ -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('loginModal')">&times;</button>
+    <h4 class="block_title">Welcome back</h4>
+    <form action="https://learnmarine.com/site/login" method="post">
+      <div class="form-group">
+        <input type="email" class="form-control" name="LoginForm[email]" placeholder="my.email@example.com" required>
+      </div>
+      <div class="form-group">
+        <input type="password" class="form-control" name="LoginForm[password]" placeholder="Your password" required>
+      </div>
+      <div class="form-group text-right">
+        <a href="https://learnmarine.com/account/request-password-reset" class="form-text-gray">Forgot Password?</a>
+      </div>
+      <div class="form-group">
+        <button type="submit" class="button-sm modal-btn">Login</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ═══ MODAL: Sign Up ═══ -->
+<div class="modal-overlay" id="signupModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('signupModal')">&times;</button>
+    <h4 class="block_title">Create an account</h4>
+    <form action="https://learnmarine.com/site/signup" method="post">
+      <div class="form-group">
+        <input type="text" class="form-control" name="SignupForm[name]" placeholder="Your First Name" required>
+      </div>
+      <div class="form-group">
+        <input type="text" class="form-control" name="SignupForm[last_name]" placeholder="Your Last Name" required>
+      </div>
+      <div class="form-group">
+        <input type="email" class="form-control" name="SignupForm[email]" placeholder="my.email@example.com" required>
+      </div>
+      <div class="form-group">
+        <input type="password" class="form-control" name="SignupForm[password]" placeholder="Your password" required>
+      </div>
+      <div class="form-group">
+        <div class="checkbox-row">
+          <input type="checkbox" id="checkbox-agree" name="SignupForm[agree]" required>
+          <label for="checkbox-agree">I accept the <a href="https://learnmarine.com/terms" target="_blank">Terms and Conditions</a></label>
+        </div>
+      </div>
+      <div class="form-group">
+        <button type="submit" class="button-sm modal-btn">Sign Up</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ═══ COOKIE BANNER ═══ -->
+<div id="cookie-banner">
+  <p>This website uses cookies. By clicking "Accept all cookies" you agree to the use of cookies to help us provide a better experience. Read our <a href="https://learnmarine.com/privacy_policy" target="_blank">Cookie Policy</a>.</p>
+  <div class="cookie-btn-group">
+    <button class="cookie-btn cookie-btn-primary"   id="cookieAcceptAll">Accept all cookies</button>
+    <button class="cookie-btn cookie-btn-secondary" id="cookieEssential">Accept only necessary</button>
+  </div>
+</div>
+
+<script>
+  /* ── Modals ── */
+  function openModal(id) {
+    document.getElementById(id).classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) closeModal(overlay.id);
+    });
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay.active').forEach(function(m) {
+        closeModal(m.id);
+      });
+    }
+  });
+
+  /* ── Mobile menu ── */
+  document.getElementById('mobileMenuToggle').addEventListener('click', function() {
+    var nav = document.getElementById('mobileNav');
+    nav.style.display = nav.style.display === 'block' ? 'none' : 'block';
+  });
+
+  /* ── Cookie banner ── */
+  (function() {
+    var banner = document.getElementById('cookie-banner');
+    if (localStorage.getItem('cookieConsent')) { banner.style.display = 'none'; return; }
+    document.getElementById('cookieAcceptAll').addEventListener('click', function() {
+      localStorage.setItem('cookieConsent', 'all');
+      banner.style.display = 'none';
+    });
+    document.getElementById('cookieEssential').addEventListener('click', function() {
+      localStorage.setItem('cookieConsent', 'essential');
+      banner.style.display = 'none';
+    });
+  })();
+
+  /* ── Language ── */
+  (function() {
+    var stored = localStorage.getItem('selectedLang');
+    if (stored) document.getElementById('change_language').value = stored;
+  })();
+  document.getElementById('change_language').addEventListener('change', function() {
+    localStorage.setItem('selectedLang', this.value);
+  });
+</script>
+
+</body>
+</html>
